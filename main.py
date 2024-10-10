@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import warnings
 
-—-------
+# —-------
 ## Avoid printing out warnings
 with warnings.catch_warnings():
      warnings.filterwarnings("ignore")
@@ -25,9 +25,10 @@ with warnings.catch_warnings():
 # a)Explore the dataset by using the Scikit Learn library and Numpy
 scaler = StandardScaler()
 X_main = scaler.fit_transform(X_main)
+X_b = np.c_[np.ones((X_main.shape[0], 1)), X_main]
 
 # Split into training and testing datasets
-X_train, X_test, y_train, y_test = train_test_split(X_main, y_main, test_size=0.3, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_b, y_b, test_size=0.3, random_state=42)
 
 # Transpose the data to match the input format of weights
 X_train = X_train.T
@@ -95,12 +96,33 @@ def predict ():
 # a)Precision
 # b)Recall
 # c)F1 score
-# d)Confusion matrix.
+# d)Confusion matrix..
+# Evaluate the model - Make sure the correct variables are passed 
+precision = precision_score(y_test, y_test_pred_class)
+recall = recall_score(y_test, y_test_pred_class)
+f1 = f1_score(y_test, y_test_pred_class)
+accuracy = accuracy_score(y_test, y_test_pred_class)
+conf_matrix = confusion_matrix(y_test, y_test_pred_class)
+# Display the results
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1 Score: {f1}")
+print(f"Accuracy: {accuracy}")
+print(f"Confusion Matrix:\n{conf_matrix}")
 
 # 6.Plot the log loss on every 100th iteration of your gradient descent, 
 # with the iterationnumber on the horizontal axis and the objective value on the vertical axis
-
-
-
+# Plot the log loss over iterations
+plt.plot(range(0, iterations, 100), log_losses)
+plt.xlabel("Iterations")
+plt.ylabel("Log Loss")
+plt.title("Log Loss over Iterations")
+plt.show()
 
 #7.Use the test set as a validation set and see if you can find a better setting of thehyperparameters. Report the best values you found.
+
+
+
+
+
+
