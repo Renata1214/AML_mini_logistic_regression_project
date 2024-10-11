@@ -25,7 +25,7 @@ with warnings.catch_warnings():
 # a)Explore the dataset by using the Scikit Learn library and Numpy
 scaler = StandardScaler()
 X_main = scaler.fit_transform(X_main)
-#Add columns of 1 to account for bias, and then you will only need the theta
+
 X_b = np.c_[np.ones((X_main.shape[0], 1)), X_main]
 
 # Split into training and testing datasets
@@ -34,6 +34,12 @@ print (X_train)
 print (X_test)
 print(y_train)
 print(y_test)
+
+# Transpose the data to match the input format of weights
+# X_train = X_train.T
+# X_test = X_test.T
+# y_train = y_train.reshape(1, y_train.shape[0])
+# y_test = y_test.reshape(1, y_test.shape[0])
 
 # 2.In the assignment, you will use gradient descent to find the weights 
 # for the logisticregression problem and apply it to the dataset
@@ -57,21 +63,23 @@ def gradient_descent (x_1, y_1, lr,iterations):
     m, n= x_1.shape
     # Initialize weights and bias to zeros
     weights = np.zeros((n, 1))
-    #bias = 0
+    bias = 0
     # Store loss history to visualize convergence
     loss_history = []
     for i in range(iterations):
         # Forward propagation
-        z = np.dot(x_1, weights.T) 
+        z = np.dot(weights.T, x_1) + bias
         y_hat = sigmoid(z)
         # Compute cost/loss
-        loss = loss_function(y, y_hat)
+        loss =  loss_function(y, y_hat)
         loss_history.append(loss)
         # Backward propagation (gradient calculation)
-        gradients = (1/m) * np.dot(x_1.T, (y_hat - y_1))
+        dw = (1/m) * np.dot(X, (y_hat - y).T)
+        db = (1/m) * np.sum(y_ hat - y)
         # Update parameters 
-        weights =weights - lr * gradients
-    return weights, loss_history
+        weights =weights - learning_rate * dw
+        bias = bias - learning_rate * db
+    return weights, bias, loss_history
 
 def predict(X, w):
     z = np.dot(X, w)
@@ -84,8 +92,8 @@ def predict(X, w):
 # c)Run your algorithm for 5000 iterations to update weights
 lr1=0.5
 iterations1=5000
-w_result, loss_result = gradient_descent (X_train, y_train, lr1,iterations1)
-binary_predictions = predict(X_test,w_result)
+w_result, b, loss_result = gradient_descent (X_train, y_train, lr1,iterations1)
+binary_predictions = predict(X_train,w_result)
 
 # 4.Report the coefficient vector w
 print ("The coefficient vector w was : ", w_result)
@@ -96,11 +104,11 @@ print ("The coefficient vector w was : ", w_result)
 # c)F1 score
 # d)Confusion matrix..
 # Evaluate the model - Make sure the correct variables are passed 
-precision = precision_score(y_test, binary_predictions)
-recall = recall_score(y_test, binary_predictions)
-f1 = f1_score(y_test, binary_predictions)
-accuracy = accuracy_score(y_test, binary_predictions)
-conf_matrix = confusion_matrix(y_test, binary_predictions)
+precision = precision_score(y_test, y_test_pred_class)
+recall = recall_score(y_test, y_test_pred_class)
+f1 = f1_score(y_test, y_test_pred_class)
+accuracy = accuracy_score(y_test, y_test_pred_class)
+conf_matrix = confusion_matrix(y_test, y_test_pred_class)
 # Display the results
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
@@ -115,16 +123,12 @@ plt.plot(range(0, iterations, 100), log_losses)
 plt.xlabel("Iterations")
 plt.ylabel("Log Loss")
 plt.title("Log Loss over Iterations")
-plt.show()  
+plt.show()
 
 #7.Use the test set as a validation set and see if you can find a better setting of thehyperparameters. Report the best values you found.
-w_result1, loss_result1 = gradient_descent (X_test, y_test, lr1,iterations1)
-binary_predictions1 = predict(X_train,w_result1)
-print ("The coefficient vector w was : ", w_result1)
 
-precision = precision_score(y_train, binary_predictions1)
-recall = recall_score(y_train, binary_predictions1)
-f1 = f1_score(y_train, binary_prediction1s)
-accuracy = accuracy_score(y_train, binary_predictions1)
-conf_matrix = confusion_matrix(y_train, binary_predictions1)
+
+
+
+
 
